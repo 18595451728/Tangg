@@ -8,20 +8,12 @@
         </div>
         <div class="s_bd">
             <div v-show="tab==0">
-                <img src="/static/img/xqt.png" width="100%" alt="">
+                <img :src="bannerInfo.goods_detail_pic" width="100%" alt="">
             </div>
             <div v-show="tab==1">
-                <div class="each">
-                    <p>产品名称</p>
-                    <p>普瑞福连翘抗菌液</p>
-                </div>
-                <div class="each">
-                    <p>主要成分</p>
-                    <p>辛夷、白芷、黄柏、艾叶、冰片、黄苓、血竭、连翘、当归、大黄、川芎、苍耳子、没药、鹅不食草、细辛、田七、紫花地丁、茶树精油</p>
-                </div>
-                <div class="each">
-                    <p>杀灭微生物类别</p>
-                    <p>本品对金黄色葡萄球菌、白色念珠菌、大肠杆菌具有杀灭作用</p>
+                <div class="each" v-for="item,index in bannerInfo.goods_param">
+                    <p>{{item.key}}</p>
+                    <p>{{item.value}}</p>
                 </div>
             </div>
         </div>
@@ -31,6 +23,9 @@
 <script>
     export default {
         name: "Sku",
+        props:{
+            bannerInfo:{},
+        },
         data(){
             return{
                 tab:0

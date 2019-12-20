@@ -2,19 +2,20 @@
     <div class="pros">
         <div class="swiper-container banner">
             <div class="swiper-wrapper">
-                <div class="swiper-slide" v-for="item,index in 5">
-                    <img src="/static/img/pro-detail-banner.png" alt="">
+                <div class="swiper-slide" v-for="item in bannerInfo.goods_banner_pic">
+                    <img :src="item" alt="">
                 </div>
             </div>
         </div>
         <div class="pro_mes">
-            <p class="name">普瑞福鼻腔抗菌液</p>
-            <p class="desc">复方薄荷油滴鼻液成人儿童鼻炎抑菌液鼻腔喷剂鼻出血干燥阴凉干燥处密封储存，请置于儿童不易接触处。</p>
+            <p class="name">{{bannerInfo.goods_name}}</p>
+            <p class="desc">{{bannerInfo.goods_describe}}</p>
             <div class="swiper-container price">
                 <div class="swiper-wrapper">
-                    <div class="swiper-slide" v-for="item,index in 5" :class="{active:prices==index}" @click="changePrice(index)">
-                        <p>￥2688.00</p>
-                        <p>1件起购</p>
+                    <div class="swiper-slide" v-for="item,index in bannerInfo.purchase" :class="{'active':prices === index}" @click="changePrice(index)">
+
+                       <p>￥{{item.goods_price}}</p>
+                        <p>{{item.goods_num}}件起购</p>
                     </div>
                 </div>
             </div>
@@ -25,6 +26,10 @@
 <script>
     export default {
         name: "Banner",
+        props:{
+            bannerInfo:{goods_banner_pic:[]},
+            proInfo:Object,
+        },
         data() {
             return {
                 prices:0

@@ -1,39 +1,52 @@
 <template>
     <div class="tab">
         <div class="tab_hd">
-            <div :class="{active:tab==0}" @click="chooseTab(0)">外用抗菌</div>
-            <div :class="{active:tab==1}" @click="chooseTab(1)">固体饮料</div>
+
+            <div v-for="(item,index) of typeList" :key="item.appointment_id" :class="{active: tab === index}" @click="chooseTab(index,item.goods_cate_id)">
+                {{item.goods_cate_name}}
+            </div>
+
+            <!--<div :class="{active:tab==1}" @click="chooseTab(1)">固体饮料</div>-->
         </div>
-        <div class="tab_bd">
-            <div class="pro" v-for="item in 5" @click="toDetail()">
-                <div class="pro_img"><img src="/static/img/pro.png" alt=""></div>
-                <p class="price">￥2688.00<span>￥2688.00</span></p>
-                <p class="name">普瑞福鼻腔抗菌液</p>
-                <p class="desc">复方薄荷油滴鼻液成人儿童鼻炎抑菌液鼻腔喷剂鼻出血</p>
+        <div v-if="proList.length > 0" class="tab_bd">
+            <div class="pro" v-for="(item,index) in proList" @click="toDetail(item.goods_id)">
+                <div class="pro_img"><img :src="item.goods_pic" alt=""></div>
+                <p class="price">￥{{item.goods_price}}<span>￥{{item.goods_price}}</span></p>
+                <p class="name">{{item.goods_name}}</p>
+                <p class="desc">{{item.goods_describe}}</p>
                 <p class="buy">立即购买</p>
             </div>
         </div>
-        <p class="qidai">商城正在上新中哦，请尽情期待！</p>
+        <p v-if="proList.length <= 0" class="qidai">商城正在上新中哦，请尽情期待！</p>
     </div>
 </template>
 
 <script>
     export default {
         name: "Allprotab",
+        props:{
+            typeList:Array, // 类型列表
+            proList:Array, // 商品列表
+        },
         data() {
             return {
-                tab: 0
+                tab: 0,
+                cateId:'',
             }
         },
         mounted() {
 
         },
         methods: {
-            chooseTab(e) {
-                this.tab = e
+            // tab 切换
+            chooseTab(e,cateId) {
+                this.tab = e;
+                this.cateId = cateId;
+                this.$emit('event1',{e,cateId});
             },
-            toDetail(){
-                this.$router.push('./ProductDetail')
+            // 调转详情页
+            toDetail(cateId){
+                this.$router.push({ path: "./ProductDetail", query: { cateId:cateId  }});
             }
         }
     }

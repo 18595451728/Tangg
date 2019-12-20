@@ -35,16 +35,21 @@
 <script>
     export default {
         name: "Popup",
+        props:{
+            proInfoBig:Object,
+            popup:0,
+        },
         data(){
             return {
-                popup:!0,
+                popup1:0, // 购买参数是否显示
                 sku:0,
                 proNum:1
             }
         },
         methods:{
             showPopup(){
-                this.popup = !this.popup
+                this.popup = !this._props.popup;
+
             },
             changesku(e){
                 this.sku = e

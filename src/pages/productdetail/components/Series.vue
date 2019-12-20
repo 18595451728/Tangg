@@ -1,4 +1,5 @@
 <template>
+
     <div class="series">
         <div class="s_top">
             <p class="fp">选择</p>
@@ -7,9 +8,8 @@
         </div>
         <div class="s_bottom">
             <p class="fp" style="opacity: 0;">选择</p>
-            <div class="sku">
-                <div>一盒15ml（拍2发3，拍4</div>
-                <div>共2种颜色分类可选</div>
+            <div v-for="item,index in sku_data" class="sku">
+                <div > {{item.sku_info}}</div>
             </div>
             <img src="/static/img/arrow_right.png" alt="" style="opacity: 0;">
         </div>
@@ -18,7 +18,10 @@
 
 <script>
     export default {
-        name: "Series"
+        name: "Series",
+        props:{
+            sku_data:[{sku_info:''}]
+        },
     }
 </script>
 
