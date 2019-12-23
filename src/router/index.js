@@ -44,6 +44,13 @@ import Personaldata from '@/pages/personaldata/Personaldata'
 import Membership from '@/pages/membership/Membership'
 import Store from '@/pages/store/Store'
 
+import detailPosters from '@/pages/pro_detail_Posters/detailPosters' // 海报分享
+import cityPartner from '@/pages/city_partner/cityPartner' // 申请城市合伙人
+import cityPartnerSuccess from '@/pages/city_partner_success/cityPartnerSuccess' // 申请城市合伙人成功
+import cityPartnerTeam from '@/pages/city_partner_team/cityPartnerTeam' // 我的团队
+import userRecharge from '@/pages/user_recharge/recharge' // 用户充值
+import userWithdraw from '@/pages/user_withdraw/withdraw' // 用户提现
+
 Vue.use(Router)
 
  let router = new Router({
@@ -53,6 +60,37 @@ Vue.use(Router)
             name: 'Home',
             component: Home
         },
+        {
+            path: '/detailPosters',
+            name: 'detailPosters',
+            component: detailPosters
+        },
+        {
+            path: '/cityPartner',
+            name: 'cityPartner',
+            component: cityPartner
+        },
+        {
+            path: '/cityPartnerSuccess',
+            name: 'cityPartnerSuccess',
+            component: cityPartnerSuccess
+        },
+        {
+            path: '/cityPartnerTeam',
+            name: 'cityPartnerTeam',
+            component: cityPartnerTeam
+        },
+        {
+            path: '/userRecharge',
+            name: 'userRecharge',
+            component: userRecharge
+        },
+        {
+            path: '/userWithdraw',
+            name: 'userWithdraw',
+            component: userWithdraw
+        },
+
         {
             path: '/yuyue',
             name: 'Yuyue',

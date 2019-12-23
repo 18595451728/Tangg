@@ -20,9 +20,9 @@ export default {
       return {
           nav: [
               {title: '首页',path: '/'},
-              {title: '商城',path: ''},
+              {title: '商城',path: '/allproduct'},
               {title: '预约',path: '/yuyue'},
-              {title: '购物车',path: ''},
+              {title: '购物车',path: '/Shopcart'},
               {title: '我的',path: '/Mine'},
           ],
           navIndex: 0

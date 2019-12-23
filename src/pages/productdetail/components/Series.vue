@@ -20,7 +20,7 @@
     export default {
         name: "Series",
         props:{
-            sku_data:[{sku_info:''}]
+            sku_data:Object,
         },
     }
 </script>
@@ -38,11 +38,11 @@
         -moz-box-sizing: border-box;
         box-sizing: border-box;
     }
-.s_top{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
+    .s_top{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
     .s_top img {
         width: .18rem;
     }

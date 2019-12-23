@@ -4,9 +4,9 @@
             <p class="fp">商品评价（200）</p>
             <p class="seeMore" @click="seeMore">查看全部 ></p>
         </div>
-        <div class="s_bottom">
-            <p><img src="/static/img/head_img.png" alt=""><span>唐冠商城</span></p>
-            <p class="p_content">我是鼻粘膜充血导致鼻塞，偶尔头痛，效果不错，喷上就管用，晚上能舒服的畅通的睡觉。</p>
+        <div class="s_bottom" v-for="item in private.list">
+            <p><img :src="item.user_logo" alt=""><span>{{item.user_name}}</span></p>
+            <p class="p_content">{{item.content}}</p>
         </div>
     </div>
 </template>
@@ -14,6 +14,7 @@
 <script>
     export default {
         name: "Private",
+        props:{private:Object},
         methods:{
             seeMore(){
                 this.$router.push('/Evaluate')

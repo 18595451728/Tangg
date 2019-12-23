@@ -2,28 +2,6 @@
     <div class="detail">
         <Header></Header>
         <Banner :proInfo = "proInfo" :bannerInfo="bannerInfo" ></Banner>
-        <Series :sku_data="sku_data"></Series>
-        <Private :private="private"></Private>
-        <Rz></Rz>
-        <Sku :bannerInfo="bannerInfo"></Sku>
-
-        <!--<Deep></Deep>-->
-
-        <Popup :skuIndex="skuIndex" @showPopup = 'showPopup()' :proInfoBig="proInfoBig" :popup="popup"></Popup>
-
-        <div class="deep">
-            <div class="online">
-                <img src="/static/img/online.png" alt="">
-                <p>在线咨询11</p>
-            </div>
-            <div class="line"></div>
-            <div class="collect">
-                <img src="/static/img/collect.png" alt="">
-                <p>收藏</p>
-            </div>
-            <div class="joinCart" @click="showPopup">加入购物车</div>
-            <div class="buyNow" @click="showPopup">立即购买</div>
-        </div>
 
     </div>
 </template>
@@ -31,12 +9,6 @@
 <script>
     import Header from "./components/Header"
     import Banner from "./components/Banner"
-    import Series from "./components/Series"
-    import Private from "./components/Private"
-    import Rz from "./components/Rz"
-    import Sku from "./components/Sku"
-    import Deep from "./components/Deep"
-    import Popup from "./components/Popup"
     import Swiper from 'swiper'
     import axios from 'axios'
     import 'swiper/dist/css/swiper.min.css'
@@ -45,16 +17,9 @@
         components:{
             Header,
             Banner,
-            Series,
-            Private,
-            Rz,
-            Sku,
-            Deep,
-            Popup
         },
         data () {
             return {
-                popup: false , // 是否显示规格参数
                 skuIndex:'',
                 proInfoBig:{}, // 商品详情
                 token: global.token,
@@ -62,23 +27,15 @@
                 proInfo:undefined, // 商品
                 bannerInfo:{goods_banner_pic:[], purchase:[],
                     goods_detail_pic:"",goods_param:[]}, // banner 头部
-                filter_spec:{},  // 规格
-                sku_data:{}, // 样式
-
-                private:[], // 商品详情
             }
         },
         mounted() {
             this.goods_cate_id = this.$route.query.cateId;
             this.getProInfo();  // 获取商品详情
-            this.getPrivateInfo();  // 获取商品详情
         },
         methods: {
 
-            // 进行加入购物车 与 购买
-            showPopup(){
-                this.popup = this.popup ? false : true
-            },
+
 
             // 获取商品详情
             getProInfo() {
@@ -90,27 +47,9 @@
             // 获取商品详情接口
             getProInfoApi(res) {
                 let data = res.data.data;
-                console.log('==================',data)
                 this.proInfo = data;
                 this.bannerInfo = data.list;
-                this.filter_spec = data.filter_spec; // 规格参数
-                this.sku_data = data.sku_data; // 样式
-                this.proInfoBig = data;
-                this.skuIndex = data.spec_key;
             },
-
-            // 获取商品详情
-            getPrivateInfo() {
-                // goods_id 商品id
-                axios.post("/Goods/goodsComment",{token: this.token,goods_id:this.goods_cate_id,is_pic:0,list_row:10,page:1 })
-                    .then(this.getPrivateApi);
-            },
-
-            // 获取商品详情接口
-            getPrivateApi(res) {
-                this.private = res.data.data;
-            },
-
         }
     }
 </script>

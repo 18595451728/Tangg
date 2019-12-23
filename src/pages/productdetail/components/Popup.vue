@@ -1,18 +1,22 @@
 <template>
     <div class="popup" v-show="popup" @click="showPopup">
+        <!--{{skus}}-->
         <div class="p_con" @click.stop="">
             <img src="/static/img/canclie.png" class="cancle" @click="showPopup" alt="">
             <div class="pro_top">
-                <img src="/static/img/detai_sku.png" alt="">
+
+                <img :src="proInfoBig.sku_data[sku].sku_logo" alt="">
                 <div>
-                    <p>￥2688.00</p>
+                    <p>￥{{proInfoBig.sku_data[sku].goods_price}}</p>
                     <p>选择产品规格</p>
                 </div>
             </div>
             <div class="choosesku">
                 <p>选择产品型号</p>
                 <div class="sku">
-                    <p v-for="item,index in 5" :class="{active:sku==index}" @click="changesku(index)">一盒15ml（拍2发3，拍5发6）</p>
+                    <p v-for="item,index in proInfoBig.sku_data" :class="{active:sku==index}" @click="changesku(index)">
+                        {{item.sku_info}}
+                    </p>
                 </div>
             </div>
             <div class="changeNum">
@@ -37,18 +41,20 @@
         name: "Popup",
         props:{
             proInfoBig:Object,
-            popup:0,
+            popup:true,
+            sku_data:Object,
+            skuIndex:'',
         },
         data(){
             return {
                 popup1:0, // 购买参数是否显示
-                sku:0,
+                sku:'234_236',
                 proNum:1
             }
         },
         methods:{
             showPopup(){
-                this.popup = !this._props.popup;
+                this.$emit('showPopup');
 
             },
             changesku(e){
