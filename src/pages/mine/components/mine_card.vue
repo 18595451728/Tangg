@@ -6,22 +6,22 @@
                     <img :src="item.user.user_logo" alt="">
                     <div class="basemes">
                         <h3>{{item.user.user_name}}</h3>
-                        <p>{{item.user.level_name}}</p>
+                        <p  @click="tovip">{{item.user.level_name}}</p>
                     </div>
                 </div>
-                <div class="t_right">编辑资料></div>
+                <div class="t_right" @click="editMes">编辑资料></div>
             </div>
             <div class="card_bottom">
                 <div class="b_left">
                     <div>
-                        <h3>我的VIP会员 > </h3>
-                        <p>2020-11-11到期</p>
+                        <h3>2000</h3>
+                        <p>健康币可用于商品支付</p>
                     </div>
                 </div>
                 <div class="b_right">
                     <div>
-                        <h3>VIP福利 ></h3>
-                        <p>挂号有折扣</p>
+                        <h3>200分</h3>
+                        <p>积分可在支付时抵扣</p>
                     </div>
                 </div>
             </div>
@@ -34,6 +34,14 @@
         name: "mine_card",
         props:{
             info:Array
+        },
+        methods:{
+            tovip(){
+                this.$router.push('/Membership')
+            },
+            editMes(){
+                this.$router.push('/Personaldata')
+            }
         }
     }
 </script>
@@ -122,11 +130,12 @@
         color: #a51a38;
         margin-bottom: .2rem;
         font-family: pfb;
+        text-align: center;
     }
     .card_bottom>div p{
         font-size: .24rem;
         color: #666666;
-        font-family: fpm;
+        font-family: pfm;
     }
     .b_left{
         border-right: .01rem dashed #e9e8e9;

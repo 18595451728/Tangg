@@ -27,6 +27,20 @@
                 </div>
                 <img src="../../../../static/img/arrow_right.png" alt="">
             </router-link>
+            <router-link tag="div" to="/Archives" class="l_each">
+                <div class="e-left">
+                    <img src="../../../../static/img/dangan.png" class="message" alt=""><span>健康档案</span>
+                </div>
+                <img src="../../../../static/img/arrow_right.png" alt="">
+            </router-link>
+        </div>
+        <div class="l_area">
+            <div class="l_each">
+                <div class="e-left">
+                    <img src="../../../../static/img/partner.png" class="coupon" alt=""><span>我的团队</span>
+                </div>
+                <img src="../../../../static/img/arrow_right.png" alt="">
+            </div>
         </div>
     </div>
 </template>
@@ -64,6 +78,7 @@
         align-items: center;
         line-height: .9rem;
         font-family: pfm;
+        color: #000;
     }
     .l_area .l_each:last-child{
         border-bottom: none;

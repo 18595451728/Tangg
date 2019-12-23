@@ -6,7 +6,7 @@
         <div class="header_center">个人中心</div>
         <div class="header_right">
             <img src="../../../../static/img/settings.png" @click="tosetting" alt="">
-            <img src="../../../../static/img/message_white.png" alt="">
+            <img src="../../../../static/img/message_white.png" @click="toMes" alt="">
         </div>
     </div>
 </template>
@@ -20,6 +20,9 @@
             },
             tosetting(){
                 this.$router.push('/Setting')
+            },
+            toMes(){
+                this.$router.push('/Message')
             }
         }
     }

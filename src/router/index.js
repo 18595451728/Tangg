@@ -36,6 +36,12 @@ import Editaddress from '@/pages/editaddress/Editaddress'
 import Coupon from '@/pages/coupon/Coupon'
 import Message from '@/pages/message/Message'
 import Setting from '@/pages/setting/Setting'
+import Archives from '@/pages/archives/Archives'
+import Packet from '@/pages/packet/Packet'
+import Profit from '@/pages/profit/Profit'
+import Integral from '@/pages/integral/Integral'
+import Personaldata from '@/pages/personaldata/Personaldata'
+import Membership from '@/pages/membership/Membership'
 
 Vue.use(Router)
 
@@ -222,6 +228,36 @@ Vue.use(Router)
             path: '/Setting',
             name: 'Setting',
             component: Setting
+        },
+        {
+            path: '/Archives',
+            name: 'Archives',
+            component: Archives
+        },
+        {
+            path: '/Packet',
+            name: 'Packet',
+            component: Packet
+        },
+        {
+            path: '/Profit',
+            name: 'Profit',
+            component: Profit
+        },
+        {
+            path: '/Integral',
+            name: 'Integral',
+            component: Integral
+        },
+        {
+            path: '/Personaldata',
+            name: 'Personaldata',
+            component: Personaldata
+        },
+        {
+            path: '/Membership',
+            name: 'Membership',
+            component: Membership
         }
     ]
 })
