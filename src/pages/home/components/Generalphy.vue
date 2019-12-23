@@ -63,11 +63,12 @@ export default {
 					top:0.1rem;
 					left:0.2rem;
 					h2
-						font-size: 0.25rem;
-						font-weight: 600;
+						font-size: 0.3rem;
 						line-height: 0.5rem;
+						font-family:pfb;
 					p
 						font-size: 0.24rem;
 						color: #4d4d4d;
 						line-height: 0.4rem;
+						font-family:pfm;
 </style>

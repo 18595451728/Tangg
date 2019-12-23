@@ -40,13 +40,14 @@ export default {
 				left: 0.2rem;
 				top:0.1rem
 				h2
-					font-size: 0.25rem;
-					font-weight: 600;
+					font-size: 0.3rem;
 					line-height: 0.6rem;
+					font-family:pfb;
 				p
 					font-size: 0.24rem;
 					color: #4d4d4d;
 					line-height: 0.4rem;
+					font-family:pfm;
 				button
 					font-size: 0.24rem;
 					color: #fff;
@@ -55,4 +56,5 @@ export default {
 					background: #a51a38;
 					border-radius: 0.15rem;
 					margin-top: 0.6rem;
+					font-family:pf;
 </style>

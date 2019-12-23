@@ -34,8 +34,7 @@ export default {
 				left: 0.2rem;
 				top:0.1rem
 				h2
-					font-size: 0.25rem;
-					font-weight: 600;
+					font-size: 0.3rem;
 					line-height: 0.6rem;
 				p
 					font-size: 0.24rem;
@@ -49,4 +48,15 @@ export default {
 					background: #a51a38;
 					border-radius: 0.15rem;
 					margin-top: 0.9rem;
+</style>
+<style>
+    .home_view03 a .text_content h2{
+        font-family: pfb;
+    }
+    .home_view03 a .text_content p{
+        font-family: pfm;
+    }
+    .home_view03 a .text_content button{
+        font-family: pf;
+    }
 </style>

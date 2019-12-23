@@ -1,7 +1,7 @@
 <template>
     <div class="mine_list">
         <div class="l_area">
-            <div class="l_each">
+            <div class="l_each" @click="toCoupon">
                 <div class="e-left">
                     <img src="../../../../static/img/coupon_icon.png" class="coupon" alt=""><span>优惠券</span>
                 </div>
@@ -51,6 +51,9 @@
         methods:{
             tocollect(){
                 this.$router.push('/Collection')
+            },
+            toCoupon(){
+                this.$router.push('/Coupon')
             }
         }
     }

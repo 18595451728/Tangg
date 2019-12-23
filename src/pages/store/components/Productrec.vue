@@ -53,14 +53,12 @@ export default {
   name: 'HomeProductrec'
 }
 </script>
-
 <style lang="stylus" scoped>
 	.homeView04
 		padding:0 0.3rem
-		margin-bottom:1.2rem
 		.view_title
-			margin-top:0.4rem;
-			font-size:0.28rem;
+			margin-top:0.25rem;
+			font-size:0.3rem;
 			height: 0.8rem;
 			line-height: 0.8rem;
 			font-weight: 600;
@@ -78,6 +76,12 @@ export default {
 			background: #fff;
 			margin-bottom: 0.3rem;
 			padding: 0.2rem;
+			-webkit-box-shadow: .08rem .08rem .27rem rgba(40,40,40,.06);
+			-moz-box-shadow: .08rem .08rem .27rem rgba(40,40,40,.06);
+			box-shadow: .08rem .08rem .27rem rgba(40,40,40,.06);
+			-webkit-border-radius: .1rem;
+			-moz-border-radius: .1rem;
+			border-radius: .1rem;
 			div
 				float: left;
 			.p_left
@@ -95,6 +99,7 @@ export default {
 				overflow: hidden;
 				h3
 					font-size: 0.28rem;
+					font-weight: 600;
 					margin-bottom: 0.2rem;
 					overflow: hidden;
 					white-space:nowrap;

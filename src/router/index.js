@@ -42,6 +42,7 @@ import Profit from '@/pages/profit/Profit'
 import Integral from '@/pages/integral/Integral'
 import Personaldata from '@/pages/personaldata/Personaldata'
 import Membership from '@/pages/membership/Membership'
+import Store from '@/pages/store/Store'
 
 Vue.use(Router)
 
@@ -258,6 +259,11 @@ Vue.use(Router)
             path: '/Membership',
             name: 'Membership',
             component: Membership
+        },
+        {
+            path: '/Store',
+            name: 'Store',
+            component: Store
         }
     ]
 })
