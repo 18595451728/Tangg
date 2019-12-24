@@ -1,15 +1,15 @@
 <template>
     <div class="contents">
         <div class="order_con">
-            <div class="order_title"><span>中通单号：856969652662326</span></div>
+            <div class="order_title"><span>{{express_name}}单号：{{express_no}}</span></div>
             <div class="lc">
                 <div class="l_top">
-                    <div v-for="item in lc">
+                    <div v-for="item in getLc">
                         <span :class="{active:item.hasdone}"></span>
                         <p :class="{active:item.hasdone}">{{item.title}}</p>
                     </div>
                     <div class="lines">
-                        <div v-for="item,index in lc" v-if="index!=0" :class="{active:item.hasdone}"></div>
+                        <div v-for="item,index in getLc" v-if="index!=0" :class="{active:item.hasdone}"></div>
                     </div>
                 </div>
                 <div class="l_bottom"></div>
@@ -23,18 +23,19 @@
                     <p>收</p>
                     <div class="line"></div>
                 </div>
-                <p>[收货地址]浙江省杭州市余杭区三马路888号</p>
+                <p>[收货地址]{{address_info.province}}{{address_info.city}}{{address_info.district}}{{address_info.place}}</p>
             </div>
-            <div class="wl_status" v-for="item in 5">
+            <div class="wl_status" v-for="item in express_data">
                 <div class="wl_time">
-                    <p>07-18</p>
-                    <p>20:05</p>
+                    <p>{{item.AcceptTime.split(' ')[0]}}</p>
+                    <p>{{item.AcceptTime.split(' ')[1]}}</p>
                 </div>
                 <div class="dian">
                     <p></p>
                     <div class="line"></div>
                 </div>
-                <p>[菜鸟驿站]<span>您已在杭州，正在派送</span></p>
+                <!--<p>[菜鸟驿站]<span>您已在杭州，正在派送</span></p>-->
+                <p>{{item.AcceptStation}}</p>
             </div>
         </div>
     </div>
@@ -43,22 +44,75 @@
 <script>
     export default {
         name: "Content",
+        props:['express_name','express_no','express_data','address_info','state'],
         data(){
             return {
-                lc:[
-                    {
-                        hasdone:!0,
-                        title:'已发货'
-                    },
-                    {
-                        hasdone:!0,
-                        title:'运输中'
-                    },
-                    {
-                        hasdone:!1,
-                        title:'已签收'
-                    }
-                ]
+            }
+        },
+        computed:{
+            getLc(){
+                if(this.state==0){
+                    return [
+                        {
+                            hasdone:!1,
+                            title:'已发货'
+                        },
+                        {
+                            hasdone:!1,
+                            title:'运输中'
+                        },
+                        {
+                            hasdone:!1,
+                            title:'已签收'
+                        }
+                    ]
+                }
+                else if(this.state==1){
+                    return [
+                        {
+                            hasdone:!0,
+                            title:'已发货'
+                        },
+                        {
+                            hasdone:!1,
+                            title:'运输中'
+                        },
+                        {
+                            hasdone:!1,
+                            title:'已签收'
+                        }
+                    ]
+                }else if(this.state==2||this.state==4){
+                    return [
+                        {
+                            hasdone:!0,
+                            title:'已发货'
+                        },
+                        {
+                            hasdone:!0,
+                            title:'运输中'
+                        },
+                        {
+                            hasdone:!1,
+                            title:'已签收'
+                        }
+                    ]
+                }else{
+                    return [
+                        {
+                            hasdone:!0,
+                            title:'已发货'
+                        },
+                        {
+                            hasdone:!0,
+                            title:'运输中'
+                        },
+                        {
+                            hasdone:!0,
+                            title:'已签收'
+                        }
+                    ]
+                }
             }
         },
         methods:{
@@ -177,6 +231,11 @@
         font-size: .22rem;
         color: #333;
         font-family: pfm;
+        width: 4.5rem;
+        white-space: nowrap;
+        overflow: hidden;
+        -ms-text-overflow: ellipsis;
+        text-overflow: ellipsis;
     }
     .dian{
         width: .68rem;
@@ -205,9 +264,10 @@
         left: .33rem;
     }
     .wl_status{
-        margin-bottom: .75rem;
+        /*margin-bottom: .75rem;*/
         display: flex;
         align-items: flex-start;
+        height: 1.19rem;
     }
     .wl_status:last-child{
         margin-bottom: 0;
@@ -237,6 +297,8 @@
         font-size: .2rem;
         font-family: pfm;
         color: #999999;
+        max-width: 4.5rem;
+        line-height: .3rem;
     }
     .wl_status>p span{
         color: #666;

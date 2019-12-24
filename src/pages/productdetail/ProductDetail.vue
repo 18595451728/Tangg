@@ -7,14 +7,17 @@
         <Rz></Rz>
         <Sku :bannerInfo="bannerInfo"></Sku>
 
-        <!--<Deep></Deep>-->
+        <Deep></Deep>
 
-        <Popup :skuIndex="skuIndex" @showPopup = 'showPopup()' :proInfoBig="proInfoBig" :popup="popup"></Popup>
+        <Popup :goods_cate_id="goods_cate_id" :skuIndex="skuIndex" @showPopup = 'showPopup()' :proInfoBig="proInfoBig" :popup="popup"></Popup>
+
+
+
 
         <div class="deep">
             <div class="online">
                 <img src="/static/img/online.png" alt="">
-                <p>在线咨询11</p>
+                <p>在线咨询</p>
             </div>
             <div class="line"></div>
             <div class="collect">
@@ -39,6 +42,7 @@
     import Popup from "./components/Popup"
     import Swiper from 'swiper'
     import axios from 'axios'
+    import global from '../../components/Global'
     import 'swiper/dist/css/swiper.min.css'
     export default {
         name: "ProductDetail",
@@ -55,23 +59,27 @@
         data () {
             return {
                 popup: false , // 是否显示规格参数
-                skuIndex:'',
-                proInfoBig:{}, // 商品详情
-                token: global.token,
+                skuIndex:0,
+                proInfoBig:{sku_data:{sku_logo:''}}, // 商品详情
                 goods_cate_id:'', // 商品id
                 proInfo:undefined, // 商品
                 bannerInfo:{goods_banner_pic:[], purchase:[],
-                    goods_detail_pic:"",goods_param:[]}, // banner 头部
+                goods_detail_pic:"",goods_param:[]}, // banner 头部
                 filter_spec:{},  // 规格
                 sku_data:{}, // 样式
 
-                private:[], // 商品详情
+                private:{}, // 商品详情
             }
         },
+        beforeMount(){
+
+        },
+
         mounted() {
+            console.log('执行============')
             this.goods_cate_id = this.$route.query.cateId;
             this.getProInfo();  // 获取商品详情
-            this.getPrivateInfo();  // 获取商品详情
+            this.getPrivateInfo();  // 获取评价
         },
         methods: {
 
@@ -83,11 +91,11 @@
             // 获取商品详情
             getProInfo() {
                 // goods_id 商品id
-                axios.post("/Goods/goodsDetail",{token: this.token, goods_id:this.goods_cate_id})
+                axios.post("/Goods/goodsDetail",{token: this.$storage.session.get('token'), goods_id:this.goods_cate_id})
                     .then(this.getProInfoApi);
             },
 
-            // 获取商品详情接口
+            // 获取评价
             getProInfoApi(res) {
                 let data = res.data.data;
                 console.log('==================',data)
@@ -96,17 +104,23 @@
                 this.filter_spec = data.filter_spec; // 规格参数
                 this.sku_data = data.sku_data; // 样式
                 this.proInfoBig = data;
-                this.skuIndex = data.spec_key;
+
+                for(var idx in sku_data){
+                    if(data.spec_key == sku_data[idx].spec_key){
+                        this.skuIndex = idx;
+                    }
+                }
+                // this.skuIndex = data.spec_key;
             },
 
-            // 获取商品详情
+            // 获取评价
             getPrivateInfo() {
                 // goods_id 商品id
-                axios.post("/Goods/goodsComment",{token: this.token,goods_id:this.goods_cate_id,is_pic:0,list_row:10,page:1 })
+                axios.post("/Goods/goodsComment",{token: this.$storage.session.get('token'),goods_id:this.goods_cate_id,is_pic:0,list_row:10,page:1 })
                     .then(this.getPrivateApi);
             },
 
-            // 获取商品详情接口
+            // 获取商品评价接口
             getPrivateApi(res) {
                 this.private = res.data.data;
             },

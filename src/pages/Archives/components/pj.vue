@@ -4,31 +4,31 @@
             <div class="list">
                 <div class="list_header">
                     <p class="h_left">姓名</p>
-                    <p class="h_right">唐冠健康</p>
+                    <p class="h_right">{{health.user_name}}</p>
                 </div>
             </div>
             <div class="list">
                 <div class="list_header">
                     <p class="h_left">性别</p>
-                    <p class="h_right">女</p>
+                    <p class="h_right">{{health.sex}}</p>
                 </div>
             </div>
             <div class="list">
                 <div class="list_header">
                     <p class="h_left">出生年月</p>
-                    <p class="h_right">1999年1月12日</p>
+                    <p class="h_right">{{health.birth}}</p>
                 </div>
             </div>
             <div class="list">
                 <div class="list_header">
                     <p class="h_left">联系地址</p>
-                    <p class="h_right">浙江省杭州市西湖区西溪路</p>
+                    <p class="h_right">{{health.address}}</p>
                 </div>
             </div>
             <div class="list">
                 <div class="list_header">
                     <p class="h_left">联系电话</p>
-                    <p class="h_right">18744554644</p>
+                    <p class="h_right">{{health.telephone}}</p>
                 </div>
             </div>
             <div class="list">
@@ -37,7 +37,7 @@
                     <p class="h_right"></p>
                 </div>
                 <div class="list_con">
-                    临床表现常指医学中患者得了某种疾病后身体发生的一系列异常变化。临床表现常常用着对疾病诊断的重要依据。临床表现常指医学中患者得了某种疾病后身体发生临床表现常指医学中患者得了某种疾病后身体发生的一系列异常变化。临床表现常常用着对疾病诊断的重要依据。临床表现常指医学中患者得了某种疾病后身体发生
+                    {{health.clinical_feature}}
                 </div>
             </div>
             <div class="list">
@@ -46,13 +46,13 @@
                     <p class="h_right"></p>
                 </div>
                 <div class="list_con">
-                    临床表现常指医学中患者得了某种疾病后身体发生的一系列异常变化。临床表现常常用着对疾病诊断的重要依据。临床表现常指医学中患者得了某种疾病后身体发生临床表现常指医学中患者得了某种疾病后身体发生的一系列异常变化。临床表现常常用着对疾病诊断的重要依据。临床表现常指医学中患者得了某种疾病后身体发生
+                    {{health.expectation}}
                 </div>
             </div>
             <div class="list">
                 <div class="list_header">
                     <p class="h_left">健康管理方法</p>
-                    <p class="h_right">针灸</p>
+                    <p class="h_right">{{health.management}}</p>
                 </div>
             </div>
             <div class="list">
@@ -61,19 +61,19 @@
                     <p class="h_right"></p>
                 </div>
                 <div class="list_con">
-                    临床表现常指医学中患者得了某种疾病后身体发生的一系列异常变化。临床表现常常用着对疾病诊断的重要依
+                    {{health.announcements}}
                 </div>
             </div>
             <div class="list">
                 <div class="list_header">
                     <p class="h_left">单疗程费用</p>
-                    <p class="h_right">2000元</p>
+                    <p class="h_right">{{health.treatment_price}}</p>
                 </div>
             </div>
             <div class="list">
                 <div class="list_header">
                     <p class="h_left">预计总费用</p>
-                    <p class="h_right">2000元</p>
+                    <p class="h_right">{{health.total_price}}</p>
                 </div>
             </div>
             <div class="list">
@@ -82,7 +82,7 @@
                     <p class="h_right"></p>
                 </div>
                 <div class="list_con">
-                    临床表现常指医学中患者得了某种疾病后身体发生的一系列异常变化。临床表现常常用着对疾病诊断的重要依
+                    {{health.remark}}
                 </div>
             </div>
         </div>
@@ -92,6 +92,7 @@
 <script>
     export default {
         name: "pj",
+        props:['health'],
         data() {
             return {
             }

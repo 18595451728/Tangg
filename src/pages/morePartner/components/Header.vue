@@ -3,7 +3,7 @@
         <div class="header_left" @click="goback">
             <img src="../../../../static/img/tgicon_back.png" alt="">
         </div>
-        <div class="header_center">选择收货地址</div>
+        <div class="header_center">我的团队</div>
         <div class="header_right">
             <!-- <img src="../../../../static/img/tgicon_search_gray.png" alt=""> -->
         </div>
@@ -12,14 +12,8 @@
 <script>
     export default {
         name: 'proDHeader',
-        mounted() {
-            // confirmorder
-
-        },
-
         methods:{
             goback(){
-
                 this.goBack()
             }
         }
@@ -51,7 +45,7 @@
         flex: 1;
         text-align: center;
         font-size: 0.36rem;
-        font-family: pfb;
+        /*font-family: pfb;*/
     }
 
     .yuyue_header .header_right {

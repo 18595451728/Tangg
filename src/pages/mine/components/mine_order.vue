@@ -2,26 +2,26 @@
     <div class="mine_order">
         <div class="o_top">
             <p>我的订单</p>
-            <p @click="goOrder">查看全部</p>
+            <p @click="goOrder('')">查看全部</p>
         </div>
         <div class="o_bottom">
-            <div>
+            <div @click="goOrder(1)">
                 <img src="../../../../static/img/o1.png" class="o1" alt="">
                 <p>待支付</p>
             </div>
-            <div>
+            <div  @click="goOrder(2)">
                 <img src="../../../../static/img/o2.png" class="o2" alt="">
                 <p>待发货</p>
             </div>
-            <div>
+            <div @click="goOrder(3)">
                 <img src="../../../../static/img/o3.png" class="o3" alt="">
                 <p>待收货</p>
             </div>
-            <div>
+            <div @click="goOrder(4)">
                 <img src="../../../../static/img/o4.png" class="o4" alt="">
                 <p>待评价</p>
             </div>
-            <div>
+            <div @click="goOrder(6)">
                 <img src="../../../../static/img/o5.png" class="o5" alt="">
                 <p>退款/售后</p>
             </div>
@@ -33,9 +33,14 @@
     export default {
         name: "mine_order",
         methods:{
-            goOrder(){
+            goOrder(e){
                 console.log(111)
-                this.$router.push('/Order')
+                this.$router.push({
+                    path:'/Order',
+                    query:{
+                        status:e
+                    }
+                })
             }
         }
     }

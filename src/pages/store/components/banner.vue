@@ -1,7 +1,7 @@
 <template>
     <div class="banner swiper-container">
         <div class="swiper-wrapper">
-            <div class="swiper-slide" v-for="item in 3">
+            <div class="swiper-slide" v-for="item in getBanner">
                 <img src="/static/img/storeBanner.png" alt="">
             </div>
         </div>
@@ -12,10 +12,20 @@
 <script>
     export default {
         name: "banner",
+        props:['banners'],
         mounted() {
-            let ss = new Swiper('.banner',{
-                pagination : '.swiper-pagination',
+            this.$nextTick(function () {
+                let ss = new Swiper('.banner',{
+                    pagination : '.swiper-pagination',
+                    observer:true
+                })
             })
+        },
+        computed:{
+            getBanner(){
+                console.log(this.banners)
+                return this.banners
+            }
         }
     }
 </script>

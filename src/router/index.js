@@ -48,6 +48,7 @@ import detailPosters from '@/pages/pro_detail_Posters/detailPosters' // 海报�
 import cityPartner from '@/pages/city_partner/cityPartner' // 申请城市合伙人
 import cityPartnerSuccess from '@/pages/city_partner_success/cityPartnerSuccess' // 申请城市合伙人成功
 import cityPartnerTeam from '@/pages/city_partner_team/cityPartnerTeam' // 我的团队
+import morePartner from '@/pages/morePartner/morePartner' // 更多团员
 import userRecharge from '@/pages/user_recharge/recharge' // 用户充值
 import userWithdraw from '@/pages/user_withdraw/withdraw' // 用户提现
 
@@ -302,6 +303,11 @@ Vue.use(Router)
             path: '/Store',
             name: 'Store',
             component: Store
+        },
+        {
+            path: '/morePartner',
+            name: 'morePartner',
+            component: morePartner
         }
     ]
 })
@@ -310,11 +316,11 @@ router.beforeEach((to, from, next) => {
     console.log(to,storage)
     if(to.meta.needLogin){
         console.log(to.fullPath)
-        if(to.fullPath.indexOf('?')<0){
-
-        }else{
+        // if(to.fullPath.indexOf('?')<0){
+        //
+        // }else{
             var token = storage.session.get('token') || to.fullPath.indexOf('token')>0
-        }
+        // }
 
         if(token){
             next()

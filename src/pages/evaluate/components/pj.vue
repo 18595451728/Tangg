@@ -1,48 +1,119 @@
 <template>
     <div class="pj">
-        <div class="j_top">
-            <div class="t_mes">
-                <img src="/static/img/cartpro.png" alt="">
-                <div class="t_art">
-                    <p>普瑞福鼻腔抗菌液</p>
-                    <p>复方薄荷油滴鼻液成人儿童鼻炎</p>
+        <div v-for="item,index in list">
+            <div class="j_top">
+                <div class="t_mes">
+                    <img :src="item.goods_pic" alt="">
+                    <div class="t_art">
+                        <p>{{item.goods_name}}</p>
+                        <p>{{item.goods_describe}}</p>
+                    </div>
+                </div>
+                <div class="alle">
+                    <p>整体评论</p>
+                    <div>
+                        <img :src="index1<item.stars?'/static/img/redstar.png':'/static/img/greystar.png'" alt=""
+                             v-for="items,index1 in 5" @click="stars(index,index1)">
+                        <p>{{item.stars==1?'不太好':item.stars==2?'一般':item.stars==3?'好':item.stars==4?'很好':item.stars==5?'非常好':''}}</p>
+                    </div>
                 </div>
             </div>
-            <div class="alle">
-                <p>整体评论</p>
-                <div>
-                    <img :src="index<star?'/static/img/redstar.png':'/static/img/greystar.png'" alt=""
-                         v-for="item,index in 5" @click="stars(index)">
-                    <p>很好</p>
+            <div class="j_bottom">
+                <textarea placeholder="宝贝满足你的期待吗？说说它的优点和美中不足的地方吧" onresize="false" v-model="item.content"></textarea>
+                <div class="chooseImg">
+                    <img src="/static/img/chooseImg.png" alt="">
+                    <input type="file" style="opacity: 0;" @change="chooseImg($event,index)">
+                </div>
+                <div class="pics">
+                    <img v-for="items in item.imgs" :src="items" alt="">
+                </div>
+                <div class="niming" @click="changeNm(index)">
+                    <p><img :src="item.nm?'/static/img/selected.png':'/static/img/select.png'" alt=""><span>匿名</span></p>
+                    <p>你写的评论会以匿名的形式展现</p>
                 </div>
             </div>
         </div>
-        <div class="j_bottom">
-            <textarea placeholder="宝贝满足你的期待吗？说说它的优点和美中不足的地方吧" onresize="false"></textarea>
-            <div class="chooseImg">
-                <img src="/static/img/chooseImg.png" alt="">
-                <input type="file" style="opacity: 0;">
-            </div>
-            <div class="niming">
-                <p><img src="/static/img/selected.png" alt=""><span>匿名</span></p>
-                <p>你写的评论会以匿名的形式展现</p>
-            </div>
-        </div>
-        <div class="sure">确认发表</div>
+        <div class="sure" @click="confirm">确认发表</div>
     </div>
 </template>
 
 <script>
+    import axios from 'axios'
+    import global from "../../../components/Global"
     export default {
         name: "pj",
+        props:['list'],
         data() {
             return {
-                star: 4
+                pics:[],
+                imgs:[],
+                token:global.token
             }
         },
         methods: {
-            stars(e) {
-                this.star = e + 1
+            confirm(){
+                let arr = [],that=this
+                for(let i in this.list){
+                    let newJson = {}
+                    newJson.content=this.list[i].content
+                    newJson.slide_img=this.list[i].pics.join(',')
+                    newJson.is_name=this.list[i].nm?1:0
+                    newJson.desc_star=this.list[i].stars
+                    arr.push(newJson)
+                }
+                console.log(arr)
+                axios.post('/Order/commentOrder',{
+                    token:this.token,
+                    order_no:this.$route.query.order_no,
+                    data:arr
+                }).then(res=>{
+                    console.log(res)
+                    that.$layer.msg(res.data.msg)
+                    if(res.data.status==1){
+                       setTimeout(function () {
+                           that.$router.push('/Order')
+                       },1500)
+                    }
+                })
+            },
+            stars(i,n) {
+                this.$emit('changestar',{index:i,stars:n})
+            },
+            changeNm(index){
+                this.$emit('changeNm',{
+                    index:index,
+                    nm:!this.list[index].nm
+                })
+            },
+            chooseImg(e,index){
+                if(this.list[index].pics.length>=3){
+                    this.$layer.msg('最多上传三张图片')
+                    return false;
+                }
+
+                let img1 = e.target.files[0];
+                let that = this
+                console.log(img1)
+                let reader = new FileReader()
+                reader.readAsDataURL(img1)
+                reader.onload=function (e) {
+                    // console.log(this.result)
+                    var baseResult = this.result
+                    axios.post('/Index/uploadImg',{
+                        token: that.token,
+                        img_str:baseResult
+                    }).then(res=>{
+                        console.log(res,111)
+                        if(res.data.status==1){
+                            console.log(res.data.data.pic)
+                            // that.pics.push(res.data.data.pic)
+                            // that.imgs.push(baseResult)
+                            that.$emit('uploadImgs',{chuan:res.data.data.pic,xian:baseResult,index:index})
+                        }else{
+                            that.$layer.msg(res.data.msg)
+                        }
+                    })
+                }
             }
         }
     }
@@ -126,7 +197,7 @@
         color: #9d9d9d;
     }
 
-    .pj > div.j_bottom {
+    .j_bottom {
         padding: 0 .38rem;
         -webkit-box-sizing: border-box;
         -moz-box-sizing: border-box;
@@ -201,6 +272,16 @@
         left: .4rem;
         bottom: .4rem;
         margin: 0;
+    }
+    .pics{
+        display: flex;
+        align-items: center;
+        margin-bottom: .3rem;
+    }
+    .pics img{
+        width: 1.5rem;
+        height: 1.5rem;
+        margin-right: .3rem;
     }
     textarea::-webkit-input-placeholder {
         font-size: .24rem;

@@ -54,6 +54,7 @@ export default {
 				padding-left: 0.7rem;
 				box-sizing: border-box;
 				font-size: 0.24rem;
+				font-family:pfm;
 
 		.header_right
 			width: 1rem;

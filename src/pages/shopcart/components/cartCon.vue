@@ -2,57 +2,236 @@
     <div class="cartcon">
         <div class="c_list">
             <div class="c_head">
-                <p>共2件商品</p>
-                <p>编辑</p>
+                <p v-if="clearStu === 0">共{{dataList.length}}件商品</p>
+                <p v-if="clearStu === 1">选择</p>
+                <p @click="clearShoInfoBtn">{{clearStu === 0 ? '编辑' :'完成'}}</p>
             </div>
-            <div class="list" v-for="item in 2">
-                <img src="/static/img/selected.png" class="select" alt="">
-                <img src="/static/img/cartpro.png" alt="" class="proimg">
+            <div class="list" v-for="item,index in dataList">
+                <img @click="delShop(index,item.selected,item)" :src="item.selected === 1 ?'/static/img/selected.png':'/static/img/select.png'" class="select" alt="">
+                <img :src="item.goods_pic" alt="" class="proimg">
                 <div class="cart_art">
-                    <p class="p_name">普瑞福鼻腔抗菌液</p>
-                    <p class="p_desc">复方薄荷油滴鼻液成人儿童鼻炎</p>
+                    <!--名称-->
+                    <p class="p_name">{{item.goods_name}}</p>
+                    <!--描述-->
+                    <p class="p_desc">{{item.goods_describe}}</p>
                     <div>
-                        <p class="p_price">￥399.00</p>
+                        <!--价格-->
+                        <p class="p_price">￥{{item.goods_price}}</p>
                         <div class="p_count">
-                            <div class="reduce">-</div>
-                            <input type="number" @blur="defaultNum" v-model="cartNum">
-                            <div class="add">+</div>
+                            <!--数量-->
+                            <div class="reduce" @click="addNumBtn(index,item.goods_num,item.goods_price,item)" >-</div>
+                            <input type="number" @blur="defaultNum" v-model="item.goods_num">
+                            <div class="add" @click="minusNumBtn(index,item.goods_num,item.goods_price,item)">+</div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
         <div class="c_func">
-            <div class="f_left">
-                <img src="/static/img/select.png" alt="">
+            <div class="f_left" @click="selectAll()">
+                <img :src="selAllStu === 1 ?'/static/img/selected.png':'/static/img/select.png'" alt="">
                 <span>全选</span>
             </div>
             <div class="f_right">
-                <div class="r_left">
-                    <p>合计：<span>￥399.00</span></p>
+                <div class="r_left" v-if="clearStu === 0">
+                    <!--总价格-->
+                    <p>合计：<span>￥{{total_price}}</span></p>
                     <p>不含运费</p>
                 </div>
-                <div class="r_right" @click="jiesuan">结算 (1)</div>
+                <!--总数量-->
+                <div v-if="clearStu === 0" class="r_right" @click="jiesuan">结算 ({{total_num}})</div>
+                <div v-if="clearStu === 1" class="r_right" @click="delShopBtn">删除 ({{total_num}})</div>
             </div>
         </div>
     </div>
 </template>
 
 <script>
+    import axios from 'axios'
     export default {
         name: "cartCon",
         data() {
             return {
-                cartNum: 1
+
+                clearStu:0,
+                selAllStu:0, // 全部选中状态
+                dataList:[],
+                cartNum: 1,
+
+                old_num:0,
+                old_price:0,
+
+                total_num:0, // 总条数
+                total_price:'0', // 总价格
+
+
             }
         },
+        mounted() {
+            this.getShopCarInfo();  // 商品分类列表
+
+        },
         methods: {
+
+            // 结算 进行支付
+            jiesuan(){
+                this.$router.push({ path: "./ConfirmOrder", query: { cartType:0  }});
+                // this.cartOrderWay();
+            },
+
+            // 获取结算信息
+            cartOrderWay() {
+                axios.post("/Order/cartOrder",{token: this.$storage.session.get('token'),cart_type:0})
+                    .then(this.cartOrderApi)
+            },
+
+            //购物车列表
+            cartOrderApi(res) {
+                let datas = res.data;
+                console.log('相间产',datas.data);
+                if(datas.status === 1){
+                    this.$router.push({ path: "./ConfirmOrder", query: { datas:datas.data  }});
+                }
+            },
+
+
+            // 删除状态管理
+            clearShoInfoBtn(){
+                this.clearStu = this.clearStu === 1 ? 0 : 1;
+            },
+
+            // 删除购物车
+            delShopBtn(){
+                let dataList = this.dataList;
+                for(var item in dataList){
+                    if(dataList[item].selected === 1){
+                        console.log('+',dataList[item])
+                        this.delShopWay({cart_id:dataList[item].cart_id}); // 进行循环删除 购物车
+                    }
+                }
+            },
+
+            // 删除购物车数据
+            delShopWay(info) {
+                axios.post("/Cart/delCart",{token: this.$storage.session.get('token'),...info})
+                    .then(this.delShopApi)
+            },
+
+            //删除购物车数据API
+            delShopApi(res) {
+                let datas = res.data;
+                if(datas.status === 1){
+                    this.getShopCarInfo(); // 全部列表
+                }
+            },
+
+
+            // 全部选中
+            selectAll(){
+                let stu =  this.selAllStu === 1 ? 0 : 1;
+                this.total_num = this.selAllStu === 1 ? 0 : this.old_num;
+                this.total_price = this.selAllStu === 1 ? 0 : this.old_price;
+
+                let dataList = this.dataList;
+                for(var item in dataList){
+                    dataList[item].selected = stu;
+                    this.selectWay({cart_id:dataList[item].cart_id, selected:stu}) // 后台传的接口
+                }
+                this.dataList = dataList;
+                this.selAllStu = stu;
+            },
+
+            // 删除选中
+            delShop(index,selected,item){
+                this.dataList[index].selected = selected === 1 ? 0:1;
+                this.selectWay({cart_id:this.dataList[index].cart_id, selected:this.dataList[index].selected}) // 后台传的接口
+                if(this.dataList[index].selected === 1){
+                    this.total_num = parseInt(this.total_num) + parseInt(item.goods_num); // 总条数
+                    this.total_price = parseInt(this.total_price) + (parseInt(item.goods_price)*parseInt(item.goods_num)); // 总价格
+                }else{
+                    this.total_num = parseInt(this.total_num) - parseInt(item.goods_num); // 总条数
+                    this.total_price = parseInt(this.total_price) - (parseInt(item.goods_price)*parseInt(item.goods_num)); // 总价格
+                }
+            },
+
+            // 选中状态传入后台
+            selectWay(info) {
+                axios.post("/Cart/selected",{token: this.$storage.session.get('token'),...info})
+                    .then(this.selectApi)
+            },
+
+            //选中状态传入后台API
+            selectApi(res) {
+                let datas = res.data;
+                if(datas.status === 1){
+                }
+            },
+
+            // 数量累加
+            addNumBtn(index,num,price,info){
+                if(num <= 1){return}
+                this.dataList[index].goods_num -- ; // 当前商品数量
+                this.total_num -- ; // 总条数
+                this.total_price = parseInt(this.total_price) - parseInt(this.dataList[index].goods_price); // 总价格
+                this.old_num = this.total_num;
+                this.old_price = this.total_price;
+                this.selectNum({cart_id:info.cart_id, goods_num:this.dataList[index].goods_num});
+            },
+
+
+            // 数量减少
+            minusNumBtn(index,num,price,info){
+                if(num >= info.goods_store){
+                    return
+                }
+                    this.dataList[index].goods_num ++ ; // 当前商品数量
+                    this.total_num ++ ; // 总条数
+                    this.total_price = parseInt(this.total_price) + parseInt(this.dataList[index].goods_price); // 总价格
+                    this.old_num = this.total_num;
+                    this.old_price = this.total_price;
+
+                this.selectNum({cart_id:info.cart_id, goods_num:this.dataList[index].goods_num});
+            },
+
+
+            // 选中数量编辑 后台
+            selectNum(info) {
+                axios.post("/Cart/editCart",{token: this.$storage.session.get('token'),...info})
+                    .then(this.selectNumApi)
+            },
+
+            //选中数量编辑后台API
+            selectNumApi(res) {
+                let datas = res.data;
+                if(datas.status === 1){
+                }
+            },
+
+
+            // 购物车列表
+            getShopCarInfo() {
+                axios.post("/Cart/cartList",{token: this.$storage.session.get('token'),})
+                    .then(this.getShopCarApi)
+            },
+
+            //购物车列表
+            getShopCarApi(res) {
+                let datas = res.data;
+                if(datas.status === 1){
+                    this.dataList = datas.data.cartList; // 数据
+                    this.total_num = datas.data.total_price.total_num; // 总条数
+                    this.total_price = datas.data.total_price.total_price; // 总价格
+                    this.old_num = datas.data.total_price.total_num; // 总条数
+                    this.old_price = datas.data.total_price.total_price; // 总价格
+                }
+            },
+
+
             defaultNum() {
                 if (!this.cartNum) this.cartNum = 1
             },
-            jiesuan(){
-                this.$router.push('/ConfirmOrder')
-            }
+
+
         }
     }
 </script>

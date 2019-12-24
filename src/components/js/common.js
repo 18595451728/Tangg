@@ -1,7 +1,10 @@
 
 export var baseUrl = "http://tangguan.123bingo.cn";
 // var Token = getCookie('token');
-export var token="ae4256621198039a911977f4a54898ed";
+export var token="c6d96d502b11618e33b2f891ee81fc06";
+export const common = {
+    addressInfo:undefined,
+}
 // export function getCookie(name){
 //     var arr=document.cookie.match(new RegExp("(^| )"+name+"=([^;]*)(;|$)"));
 //     if(arr!=null){

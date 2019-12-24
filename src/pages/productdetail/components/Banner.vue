@@ -7,13 +7,13 @@
                 </div>
             </div>
         </div>
+
         <div class="pro_mes">
             <p class="name">{{bannerInfo.goods_name}}</p>
             <p class="desc">{{bannerInfo.goods_describe}}</p>
             <div class="swiper-container price">
                 <div class="swiper-wrapper">
                     <div class="swiper-slide" v-for="item,index in bannerInfo.purchase" :class="{'active':prices === index}" @click="changePrice(index)">
-
                        <p>￥{{item.goods_price}}</p>
                         <p>{{item.goods_num}}件起购</p>
                     </div>
@@ -27,7 +27,9 @@
     export default {
         name: "Banner",
         props:{
-            bannerInfo:{goods_banner_pic:[]},
+            bannerInfo:{
+                goods_banner_pic:[],purchase:[]
+            },
             proInfo:Object,
         },
         data() {

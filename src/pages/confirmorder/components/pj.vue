@@ -1,72 +1,247 @@
 <template>
     <div class="pj">
-        <div class="add_address">
+        <!--v-if="address === undefined"-->
+        <div @click="toAddress" class="add_address" v-if="address === undefined">
             <p><img src="/static/img/add.png" alt=""><span>选择收货地址</span></p>
             <img src="/static/img/arrow_right.png" alt="">
         </div>
-        <div class="pro_mes">
-            <div class="pro">
-                <img src="/static/img/cartpro.png" alt="">
+
+        <div @click="toAddress" class="add_address addres_info" v-if="address !== undefined">
+            <div class="info">
+                <p><img src="/static/img/add.png" alt=""><em>{{address.consignee}}</em> <em>{{address.telephone}}</em></p>
+                <p class="des">{{address.province}}{{address.city}}{{address.district}}{{address.address}}</p>
+            </div>
+            <img src="/static/img/arrow_right.png" alt="">
+        </div>
+
+        <!--商品列表-->
+
+
+        <div class="pro_mes" >
+            <span v-for="item,index in cartList">
+
+
+            <div class="pro" >
+                <img :src="item.goods_pic ? item.goods_pic :'' " alt="">
                 <div class="pro_art">
-                    <p><span>普瑞福鼻腔抗菌液</span><span>￥2688.00</span></p>
-                    <p><span>复方薄荷油滴鼻液成人儿童鼻炎</span><span>×1</span></p>
+                    <p><span>{{item.goods_name}}</span><span>￥{{item.goods_price}}</span></p>
+                    <p><span>{{item.goods_describe}}</span><span>×{{item.goods_num}}</span></p>
                     <p><span>15ml</span></p>
                 </div>
             </div>
             <div class="pro_count">
                 <p>购买数量</p>
                 <div class="count">
-                    <div class="reduce">-</div>
-                    <input type="number" v-model="pro_num" @blur="defaultNum">
-                    <div class="add">+</div>
+                    <div class="reduce" @click="mineNumBtn(item, index)">-</div>
+                    <input type="number" v-model="item.goods_num" @blur="defaultNum">
+                    <div class="add" @click="addNumBtn(item,index)">+</div>
                 </div>
             </div>
+        </span>
+
             <div class="fs">
                 <p>配送方式</p>
                 <p>快递  包邮</p>
             </div>
             <div class="lm">
                 <p>买家留言</p>
-                <input type="text" placeholder="选填，建议事先与客服沟通确认">
+                <input v-model="liuyan"  type="text" placeholder="选填，建议事先与客服沟通确认">
             </div>
         </div>
         <div class="sendmes">
             <div class="mes_list">
                 <p>商品金额</p>
-                <p>¥2688.00</p>
+                <p>¥{{totalPrice.total_price}}</p>
             </div>
-            <div class="mes_list">
+            <div v-if="coupon_list.length > 0" class="mes_list">
                 <p>优惠券</p>
-                <p>-¥ 4.00</p>
+                <p>-¥ </p>
             </div>
-            <div class="mes_list">
+            <div class="mes_list" v-if="integral_info.user_integral > 0">
                 <p>积分代扣</p>
-                <p>您有10积分可抵扣1.00元</p>
+                <p>您有{{integral_info.user_integral}}积分可抵扣{{(integral_info.exchange_integral/integral_info.integral_exchange)*integral_info.user_integral}}元</p>
             </div>
             <div class="mes_endprice">
-                <p><span>实付：</span>￥2683.00</p>
+                <p><span>实付：</span>￥{{totalPrice.total_price}}</p>
             </div>
         </div>
+
         <div class="deep">
             <div class="d_left">
-                <p>共1件商品</p>
-                <p>合计：<span>¥2683.00</span></p>
+                <p>共{{totalPrice.total_num}}件商品</p>
+                <p>合计：<span>¥{{totalPrice.total_price}}</span></p>
             </div>
-            <div class="d_right">立即购买</div>
+            <div class="d_right" @click="buPayBtn">立即购买</div>
         </div>
     </div>
 </template>
 
 <script>
+    import axios from 'axios'
+    import {common} from '../../../components/js/common';   //   公共变量
     export default {
         name: "pj",
         data() {
             return {
+                cart_type:0, // 购物车   直接购买
                 star: 4,
-                pro_num:1
+                pro_num:1,
+
+                cartList:[],
+                address:undefined,
+                totalPrice:[],
+                coupon_list:[], // 优惠券列表
+                couponInfo:{},
+                integral_info:{}, // 积分
+
+                liuyan:'', // 买家留言
             }
         },
+
+        mounted() {
+
+            this.cart_type = this.$route.query.cartType;
+            this.cartOrderWay()
+        },
         methods: {
+
+            // 商品 数量减少
+            mineNumBtn(info,index){
+
+
+                if(this.cartList[index].goods_num <= 1){
+                    return;
+                }
+
+                this.cartList[index].goods_num = parseInt(this.cartList[index].goods_num) - 1 ;
+                this.totalPrice.total_num = parseInt(this.totalPrice.total_num) - 1;
+                this.totalPrice.total_price = parseInt(this.totalPrice.total_price) - parseInt(this.cartList[index].goods_price);
+                this.selectNum({cart_id:info.cart_id, goods_num:this.cartList[index].goods_num});
+
+
+            },
+
+            // 商品 数量增加
+            addNumBtn(info,index){
+                if(this.cartList[index].goods_num > 10){
+                    return;
+                }
+                this.cartList[index].goods_num = parseInt(this.cartList[index].goods_num) + 1 ;
+                this.totalPrice.total_num = parseInt(this.totalPrice.total_num) + 1;
+                this.totalPrice.total_price = parseInt(this.totalPrice.total_price) + parseInt(this.cartList[index].goods_price);
+                this.selectNum({cart_id:info.cart_id, goods_num:this.cartList[index].goods_num});
+            },
+
+            // 选中数量编辑 后台
+            selectNum(info) {
+                axios.post("/Cart/editCart",{token: this.$storage.session.get('token'),...info})
+                    .then(this.selectNumApi)
+            },
+
+            //选中数量编辑后台API
+            selectNumApi(res) {
+                let datas = res.data;
+                if(datas.status === 1){
+                }
+            },
+
+
+            // 获取结算列表
+            cartOrderWay() {
+                axios.post("/Order/cartOrder",{token: this.$storage.session.get('token'),cart_type:this.cart_type})
+                    .then(this.cartOrderApi)
+            },
+
+            //获取结算列表
+            cartOrderApi(res) {
+                let datas = res.data;
+                if(datas.status === 1){
+                    if(common.addressInfo !== undefined){
+                        this.address = common.addressInfo;
+                        common.addressInfo = {};
+                    }else{
+                        this.address = datas.data.address;
+                    }
+                    this.cartList = datas.data.cartList;
+                    this.coupon_list = datas.data.coupon_list;
+                    this.totalPrice = datas.data.totalPrice;
+                    this.integral_info = datas.data.integral_info;
+                    // this.getOrderPriceWay();  // 获取优惠价格方法
+                }
+            },
+
+            // 去支付
+            buPayBtn(){
+                this.toBuyWay(); // 去支付
+            },
+
+            // 去支付方法
+            toBuyWay() {
+                if(!this.address){
+                    this.$layer.msg('请进行选择收货地址')
+                    return;
+                }
+                let params = {pay_integral:'',coupon_id:0, address_id:this.address.address_id, user_note:this.liuyan};
+                axios.post("/Order/addOrder",{token: this.$storage.session.get('token'),cart_type:this.cart_type,...params})
+                    .then(this.toBuyApi)
+            },
+
+            //去支付API
+            toBuyApi(res) {
+                let datas = res.data;
+                if(datas.status === 1){
+                    this.weChatPay(datas.data.order_no);
+                }
+            },
+
+            // 去支付方法
+            weChatPay(order_no) {
+                axios.post("/Pay/weChatPay",{token: this.$storage.session.get('token'),order_no:order_no})
+                    .then(this.weChatPayApi)
+            },
+
+            //去支付API
+            weChatPayApi(res) {
+                let datas = res.data;
+                if(datas.status === 1){
+                    this.$layer.msg(res.msg);
+                    setTimeout(()=>{
+                        this.$router.push({ path: "./Mine"});
+                    },1500)
+                }
+            },
+
+
+
+
+
+
+            // 获取优惠价格方法
+            getOrderPriceWay() {
+                axios.post("/Order/orderBuy",{token: this.$storage.session.get('token'),cart_type:this.cart_type})
+                    .then(this.getOrderPriceApi)
+            },
+
+            //获取优惠价格API
+            getOrderPriceApi(res) {
+                let datas = res.data;
+                if(datas.status === 1){
+                    this.address = datas.data.address;
+                    this.cartList = datas.data.cartList;
+                    this.coupon_list = datas.data.coupon_list;
+                    this.totalPrice = datas.data.totalPrice;
+                    this.integral_info = datas.data.integral_info;
+                }
+            },
+
+
+
+            // 跳入收货地址
+            toAddress(){
+                this.$router.push({ path: "./Addresslist",query: { paths:'confirmorder'  }});
+            },
+
+
             stars(e) {
                 this.star = e + 1
             },
@@ -78,6 +253,13 @@
 </script>
 
 <style scoped>
+    .addres_info .des{
+        line-height: 0.38rem;
+        margin-top: 0.14rem;
+        color: #666;
+    }
+    .add_address.addres_info p{color: #333;}
+
     .pj > div {
         width: 6.9rem;
         margin: .25rem auto;
@@ -92,6 +274,7 @@
         border-radius: .1rem;
     }
     .add_address{
+        margin-bottom: -0.30rem;
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -106,7 +289,7 @@
         -moz-box-shadow: 0 0 .24rem rgba(150,150,150,.07);
         box-shadow: 0 0 .24rem rgba(150,150,150,.07);
     }
-    .add_address>img{
+    .add_address img{
         width: .15rem;
     }
     .add_address p img{
@@ -125,6 +308,7 @@
         box-sizing: border-box;
     }
     .pro{
+        margin-top: 0.30rem;
         display: flex;
         align-items: flex-start;
         padding-bottom: .3rem;

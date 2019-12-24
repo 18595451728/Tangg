@@ -8,8 +8,11 @@
         </div>
         <div class="s_bottom">
             <p class="fp" style="opacity: 0;">选择</p>
-            <div v-for="item,index in sku_data" class="sku">
-                <div > {{item.sku_info}}</div>
+            <div  class="sku">
+                <div > {{sku_data[0].sku_info}}</div>
+            </div>
+            <div class="sku">
+                <div >共{{sku_data.length}}种颜色分类可选</div>
             </div>
             <img src="/static/img/arrow_right.png" alt="" style="opacity: 0;">
         </div>

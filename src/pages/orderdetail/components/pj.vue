@@ -2,75 +2,162 @@
     <div class="pj">
 
         <div class="pro_mes">
-            <div class="pro">
-                <img src="/static/img/cartpro.png" alt="">
-                <div class="pro_art">
-                    <p><span>普瑞福鼻腔抗菌液</span><span>￥2688.00</span></p>
-                    <p><span>复方薄荷油滴鼻液成人儿童鼻炎</span><span>×1</span></p>
-                    <p><span>15ml</span></p>
+            <div>
+                <div class="pro" v-for="item in goodsMes">
+                    <img :src="item.goods_pic" alt="">
+                    <div class="pro_art">
+                        <p><span>{{item.goods_name}}</span><span>￥{{item.goods_price}}</span></p>
+                        <p><span>{{item.goods_describe}}</span><span>×1</span></p>
+                        <p v-show="item.sku_info"><span>{{item.sku_info}}</span></p>
+                        <!--<p><span>15ml</span></p>-->
+                    </div>
                 </div>
             </div>
             <div class="sendmes">
                 <div class="mes_list">
                     <p>商品金额</p>
-                    <p>¥2688.00</p>
+                    <p>¥{{orderMes.total_fee}}</p>
                 </div>
                 <div class="mes_list">
                     <p>优惠券</p>
-                    <p>-¥ 4.00</p>
+                    <p>-¥ {{orderMes.coupon_price}}</p>
                 </div>
                 <div class="mes_list">
                     <p>积分代扣</p>
-                    <p>您有10积分可抵扣1.00元</p>
+                    <p>您有{{orderMes.integral}}积分可抵扣{{orderMes.integral_money}}元</p>
                 </div>
                 <div class="mes_endprice">
-                    <p><span>实付：</span>￥2683.00</p>
+                    <p><span>实付：</span>￥{{orderMes.total_price}}</p>
                 </div>
             </div>
         </div>
         <div class="xiang">
             <div class="each_xiang">
                 <p>配送方式</p>
-                <p>免运费  快递发货</p>
+                <p>{{orderMes.ps||'免运费  快递发货'}}</p>
             </div>
             <div class="each_xiang">
                 <p>买家留言</p>
-                <p>无</p>
+                <p>{{orderMes.user_note||'无'}}</p>
             </div>
         </div>
         <div class="ding">
             <div class="each_ding">
-                <p>订单编号：E232454646454FDF34</p>
+                <p>订单编号：{{orderMes.order_no}}</p>
             </div>
             <div class="each_ding">
-                <p>创建时间：2019-09-20 17:42:07</p>
+                <p>创建时间：{{orderMes.order_time}}</p>
             </div>
         </div>
-        <div class="deep">
-            <div class="d_left" @click="refund">申请售后</div>
-            <div class="d_right">确认收货</div>
+        <div class="deep" :class="{single:order_status==0||order_status==2}">
+            <!--<div class="d_left" @click="refund">申请售后</div>-->
+            <!--<div class="d_right" @click="EnterCancle">确认收货</div>-->
+            <div class="cancleorder" v-if="order_status==1" @click="CancleOrder(order_no)">取消订单</div>
+            <div class="payorder" v-if="order_status==1" @click="PayOrder(order_no)">付款</div>
+            <div class="remindorder" v-if="order_status==2"  @click="RemindOrder(order_no)">提醒发货</div>
+            <div class="logistics" v-if="order_status==3"  @click="LookOrder(order_no)">查看物流</div>
+            <div class="confirmorder" v-if="order_status==3" @click="EnterOrder(order_no)">确认收货</div>
+            <div class="deleteorder" v-if="order_status==4 || order_status==5 || order_status==0" @click="DeleteOrder(order_no)">删除订单</div>
+            <div class="toevaluate" v-if="order_status==4" @click="EvaluateOrder(order_no)">去评价</div>
+            <div class="shouhou" v-if="order_status==5" @click="AfterSale(order_no)">申请售后</div>
         </div>
     </div>
 </template>
 
 <script>
+    import global from '../../../components/Global'
+    import axios from 'axios'
     export default {
         name: "pj",
+        props:['goodsMes','orderMes'],
         data() {
             return {
-                star: 4,
-                pro_num:1
+                token:global.token,
+                order_status:'',
+                order_no:''
             }
+        },
+        mounted(){
+            this.order_status = this.$route.query.status
+            console.log(this.order_status)
+            this.order_no = this.$route.query.order_no
         },
         methods: {
             stars(e) {
                 this.star = e + 1
             },
-            defaultNum(){
-                if(!this.pro_num)this.pro_num = 1
+            AfterSale(e){
+                this.$router.push({
+                    path:'/Choosetype',
+                    query:{
+                        order_no:e
+                    }
+                })
             },
-            refund(){
-                this.$router.push('/Choosetype')
+            EnterOrder(e){
+                let that =this
+                axios.post('/Order/confirmOrder',{
+                    token:this.token,
+                    order_no:e
+                }).then(res=>{
+                    console.log(res)
+                    that.$layer.msg(res.data.msg)
+                    if(res.data.status==1){
+                        that.$router.push('/order')
+                    }
+                })
+            },
+
+
+
+            PayOrder(){ //去付款
+                axios.post('/Order/cancelOrder',{
+                    token:this.token,
+                    order_no:e
+                }).then(this.tishi)
+            },
+            LookOrder(e){ //查看物流
+                this.$router.push({
+                    path:'/Logistics',
+                    query:{
+                        order_no:e
+                    }
+                })
+            },
+            CancleOrder(e){ //取消订单
+                axios.post('/Order/cancelOrder',{
+                    token:this.token,
+                    order_no:e
+                }).then(this.tishi)
+            },
+            EvaluateOrder(e){        //去评价
+                this.$router.push({
+                    path:'/Evaluate',
+                    query:{
+                        order_no:e
+                    }
+                })
+            },
+            RemindOrder(e){ //提醒发货
+                axios.post('/Order/remindOrder ',{
+                    token:this.token,
+                    order_no:e
+                }).then(this.tishi)
+            },
+            DeleteOrder(e){ //删除订单
+                axios.post('/Order/delOrder ',{
+                    token:this.token,
+                    order_no:e
+                }).then(this.tishi)
+            },
+            tishi(rs){
+                var that =this
+                this.$layer.msg(rs.data.msg)
+                if(rs.data.status==1){
+                    setTimeout(function () {
+                        that.$router.go(-1)
+                    },1500)
+                }
             }
         }
     }
@@ -102,6 +189,10 @@
         align-items: flex-start;
         padding-bottom: .3rem;
         border-bottom: .01rem solid #e5e5e5;
+        margin-bottom: .3rem;
+    }
+    .pro:last-child{
+        margin-bottom: 0;
     }
     .pro>img{
         width: 1.5rem;
@@ -203,13 +294,13 @@
         -moz-box-sizing: border-box;
         box-sizing: border-box;
     }
-    .d_left{
+    .deep>div:first-child{
         background: #d9b765;
     }
-    .d_right{
+    .deep>div:last-child{
         background: #af1c3b;
     }
-    .d_right,.d_left{
+    .deep>div{
         width: 3.3rem;
         line-height: .6rem;
         text-align: center;
@@ -219,6 +310,10 @@
         -webkit-border-radius: .1rem;
         -moz-border-radius: .1rem;
         border-radius: .1rem;
+    }
+    .deep.single>div{
+        width: 6.6rem;
+        margin-left: .15rem;
     }
     .xiang{
         padding: 0 .3rem;

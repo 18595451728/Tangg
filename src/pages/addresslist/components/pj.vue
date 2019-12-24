@@ -1,40 +1,105 @@
 <template>
     <div class="pj">
-        <div class="collect" v-for="item,index in 5">
+        <div v-for="item,index in addressList" @click="selAddress(item)" class="collect" >
             <div class="c_top">
-                <div class="c_left"><span>尹浩</span><span>18042424242</span></div>
+                <div class="c_left"><span>{{item.consignee}}</span><span>{{item.telephone}}</span></div>
                 <div class="c_right">
-                    <img src="/static/img/edit.png" alt="" @click="edit">
-                    <img src="/static/img/del.png" alt="">
+                    <img src="/static/img/edit.png" alt="" @click="edit(item)">
+                    <img src="/static/img/del.png" alt="" @click="delAddress(item)">
                 </div>
             </div>
-            <div class="c_center">浙江省杭州市西湖区西溪路525号浙江大学国家大学科技园B幢</div>
-            <div class="c_bottom" v-if="index==1">
+            <div class="c_center">{{item.address}}</div>
+            <div @click="isDefaultBtn" class="c_bottom" v-if="item.is_default == 1">
                 <img src="/static/img/selected.png" alt=""><span>设为默认收货地址</span>
             </div>
+
         </div>
-        <div class="save" @click="edit">新增收货地址</div>
+        <div class="save" @click="edit(undefined)">新增收货地址</div>
     </div>
 </template>
 
 <script>
+    import axios from 'axios'
+    import {common} from '../../../components/js/common';   //   公共变量
     export default {
         name: "pj",
         data() {
             return {
                 star: 4,
-                pro_num:1
+                pro_num:1,
+                addressList:[],
+                isDefaultStu:0,
+                isToConfirmorder:0, // 是否返回结算页面
             }
         },
+        mounted() {
+            this.isToConfirmorder = this.$route.query.paths ? 1 : 0;
+            this.getAddressListInfo();  // 收货地址列表
+        },
         methods: {
+            // 地址选择
+            selAddress(info){
+                if(this.isToConfirmorder === 1){
+                    common.addressInfo = info;
+                    console.log('地址选择================',info,common.addressInfo)
+                    this.$router.go(-1);//返回上一层
+                }
+            },
             stars(e) {
                 this.star = e + 1
             },
             defaultNum(){
                 if(!this.pro_num)this.pro_num = 1
             },
-            edit(){
-                this.$router.push('/Editaddress')
+
+            edit(info){
+                this.$router.push({ path: "./Editaddress", query: { addressId: info ? info.address_id :undefined  }});
+            },
+
+            // 删除收货地址
+            delAddress(info) {
+                axios.post("/User/addressDel",{token: this.$storage.session.get('token'),address_id:info.address_id})
+                .then(this.defaultAddressApi)
+            },
+            // 设为默认地址API
+            defaultAddressApi(res) {
+                this.isDefaultStu = 1;
+                let data = res.data;
+                if(data.status === 1){
+                    this.getAddressListInfo(); // 收货地址
+                }
+            },
+
+
+            // 设为默认地址
+            isDefaultBtn(){
+                this.defaultAddress();
+            },
+
+            // 设为默认地址
+            defaultAddress(info) {
+                axios.post("/User/defaultAddress",{token: this.$storage.session.get('token'),address_id:info.address_id})
+                    .then(this.defaultAddressApi)
+            },
+            // 设为默认地址API
+            defaultAddressApi(res) {
+                let data = res.data;
+                if(data.status === 1){
+                    this.getAddressListInfo(); // 收货地址
+                }
+            },
+
+
+            // 收货地址列表
+            getAddressListInfo() {
+                axios.post("/User/addressList",{token: this.$storage.session.get('token')})
+                    .then(this.getAddressListApi)
+            },
+            // 收货地址列表api
+            getAddressListApi(res) {
+                this.isDefaultStu = 0;
+                let data = res.data;
+                this.addressList = res.data.data.list;
             }
         }
     }

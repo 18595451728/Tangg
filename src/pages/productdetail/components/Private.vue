@@ -1,7 +1,8 @@
 <template>
     <div class="series">
         <div class="s_top">
-            <p class="fp">商品评价（200）</p>
+
+            <p class="fp">商品评价（{{private.totalCount}}）</p>
             <p class="seeMore" @click="seeMore">查看全部 ></p>
         </div>
         <div class="s_bottom" v-for="item in private.list">

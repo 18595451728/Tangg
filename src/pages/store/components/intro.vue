@@ -1,13 +1,13 @@
 <template>
     <div class="intro">
-        <div class="pro" v-for="item in 2">
-            <div class="pro_name">艾叶止痒抑菌膏</div>
-            <div class="pro_desc">用于皮肤瘙痒、皮炎湿疹</div>
+        <div class="pro" v-for="item in intro">
+            <div class="pro_name">{{item.goods_name}}</div>
+            <div class="pro_desc">{{item.goods_describe}}</div>
             <div class="pro_img">
-                <img src="/static/img/introProduct.png" alt="">
+                <img :src="item.goods_pic" alt="">
             </div>
         </div>
-        <div class="books">
+        <div class="books" @click="toBook">
             <img src="/static/img/books.png" width="100%" alt="">
         </div>
     </div>
@@ -15,7 +15,13 @@
 
 <script>
     export default {
-        name: "intro"
+        name: "intro",
+        props:['intro'],
+        methods:{
+            toBook(){
+                this.$router.push('/yuyue')
+            }
+        }
     }
 </script>
 

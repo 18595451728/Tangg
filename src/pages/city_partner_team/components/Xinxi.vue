@@ -3,8 +3,8 @@
 
         <!--团队佣金-->
         <div class="tixian">
-            <p class="maney">1,000</p>
-            <p class="tits">团队佣金</p>
+            <p class="maney">{{xinxi.distribut_money}}</p>
+            <p class="tits">团队佣金(元)</p>
             <p class="btn" @click="withdrwa"><em class="fl">提现</em> <img class="fl" src="../../../assets/img/red_right.png"></p>
         </div>
 
@@ -12,13 +12,13 @@
         <div class="other_user">
             <div class="titls">一级团队</div>
             <div class="o_user_main">
-                <div class="row" v-for="item in 5">
-                    <div class="head"><img class="imgs" src="../../../assets/img/user.png"></div>
-                    <p>糖果</p>
+                <div class="row" v-for="item in getFirst">
+                    <div class="head"><img class="imgs" :src="item.user_logo"></div>
+                    <p>{{item.user_name}}</p>
                 </div>
                 <div class="row red" >
                     <div class="head"><span class="imgs "></span></div>
-                    <p>查看更多</p>
+                    <p @click="LookMore(1)">查看更多</p>
                 </div>
             </div>
         </div>
@@ -27,13 +27,13 @@
         <div class="other_user">
             <div class="titls">二级团队</div>
             <div class="o_user_main">
-                <div class="row" v-for="item in 5">
-                    <div class="head"><img class="imgs" src="../../../assets/img/user.png"></div>
-                    <p>糖果</p>
+                <div class="row" v-for="item in getSecond">
+                    <div class="head"><img class="imgs" :src="item.user_logo"></div>
+                    <p>{{item.user_name}}</p>
                 </div>
                 <div class="row red" >
                     <div class="head"><span class="imgs "></span></div>
-                    <p>查看更多</p>
+                    <p @click="LookMore(2)">查看更多</p>
                 </div>
             </div>
         </div>
@@ -49,12 +49,13 @@
                         收益日期
                     </span>
                 </div>
-                <div class="row" v-for="item in 5">
-                    <p class="name fl">易胜渡医院</p>
-                    <p class="num fl">1000000121</p>
+                <div class="row" v-for="item in shareData">
+                    <p class="name fl">{{item.username}}</p>
+                    <p class="num fl">{{item.money}}</p>
                     <span class="times fr">
-                        <p class="fl">10:30</p>
-                        <p class="fl">2019/10/01</p>
+                        <!--<p class="fl">10:30</p>-->
+                        <!--<p class="fl">2019/10/01</p>-->
+                        <p>{{item.pay_time}}</p>
                     </span>
                 </div>
             </div>
@@ -64,9 +65,36 @@
 <script>
 export default {
   name: 'AddjzrxxXinxi',
+    props:['xinxi','shareData'],
+    computed:{
+      getFirst(){
+          console.log(this.xinxi.first_list)
+          if(this.xinxi.first_list.length>5){
+              return this.xinxi.first_list.slice(0,5)
+          }else{
+              return this.xinxi.first_list
+          }
+
+      },
+        getSecond(){
+            if(this.xinxi.second_list.length>5){
+                return this.xinxi.second_list.slice(0,5)
+            }else{
+                return this.xinxi.second_list
+            }
+        },
+    },
     methods:{
         withdrwa(){
             this.$router.push({ path: "./userWithdraw", query: { userId:12  }});
+        },
+        LookMore(e){
+            this.$router.push({
+                path:'/morePartner',
+                query:{
+                    level:e
+                }
+            })
         }
     }
 }
@@ -78,13 +106,13 @@ export default {
     /*合伙人排名*/
     .partner_list{background: #fff; }
     .partner_list .top_img{width: 100%; }
-    .partner_list .top_img img{width: 100%;height: 1.2rem;}
+    .partner_list .top_img img{width: 6.9rem;margin-left:.3rem;height: 1.2rem;}
     .partner_list .list_info{ padding:0.30rem; }
     .partner_list .list_info .row.titles{background:#e5e5e5;margin-bottom: 0.20rem; padding: 0.14rem 0px 0.08rem 0px; border-radius: 0.10rem 0.10rem  0px  0px; }
     .partner_list .list_info .row{display:flex; margin-top: .10rem; font-size: 0.24rem; line-height: 0.48rem;}
     .partner_list .list_info .row .name{color: #333; flex: 1; padding: 0px  0px 0px 0.20rem; }
     .partner_list .list_info .row .num{text-align: center;width: 160px;min-width: 160px;max-width: 160px; color: #333;flex: 1;}
-    .partner_list .list_info .row  .times{color: #666;flex: 1;min-width: 2.1rem; text-align: center;}
+    .partner_list .list_info .row  .times{color: #666;flex: 2;min-width: 2.1rem; text-align: center;}
     .partner_list .list_info .row  .times .fl{margin-left: 0.10rem;}
 
     /*团队成员*/
@@ -99,14 +127,14 @@ export default {
     .other_user .o_user_main .row p{font-size: 0.24rem;line-height: 0.24rem;margin-top: 0.14rem; color: #666666;width: 100%;display:block; }
     .other_user .o_user_main .row.red{position: relative;}
     .other_user .o_user_main .row.red .imgs{background: #af1d3c;}
-    .other_user .o_user_main .row.red p{color: #fff;margin-top: 0px;line-height: 0.26rem; padding:0.16rem 0.12rem;width: 0.60rem; position: absolute; top: 0px; left: 0px;}
+    .other_user .o_user_main .row.red p{color: #fff;margin-top: 0px;line-height: 0.26rem; padding:0.16rem 0.12rem;width: 0.60rem; position: absolute; top: 0px; left: 0px;font-family: pfb}
 
     /*提现 开始*/
     .tixian{margin: 0.30rem;overflow:hidden;  position: relative; border-radius: 6px; background-image: linear-gradient(to right, #af1d3c , #e8496b);padding: 0.30rem 0.40rem 0.40rem 0.40rem;color: #fff; }
-    .tixian .maney{font-size: 0.48rem; line-height: 0.48rem; margin-bottom: 0.10rem; }
-    .tixian .tits{font-size: 0.28rem; line-height: 0.28rem;}
+    .tixian .maney{font-size: 0.48rem; line-height: 0.48rem; margin-bottom: 0.10rem; font-family: pfb}
+    .tixian .tits{font-size: 0.28rem; line-height: 0.28rem;font-family: pfb}
     .tixian .btn{ position: absolute;box-shadow: 2px 2px 10px #666;font-weight: 600; right: 0px; top: 0.50rem;  background: #fff;padding: 0.16rem 0.40rem;width: 0.80rem;overflow: hidden;  border-radius: 0.60rem 0px 0px 0.60rem;}
-    .tixian .btn em{color:#e8496b; text-align: center;font-size: 0.26rem;line-height: 0.26rem; }
+    .tixian .btn em{color:#af1c3b; text-align: center;font-size: 0.26rem;line-height: 0.26rem; font-family: pfb}
     .tixian .btn img{width: 0.12rem; height: 0.26rem; margin-left: 0.10rem;}
     .fl{float: left;}
     .fr{float: right;}

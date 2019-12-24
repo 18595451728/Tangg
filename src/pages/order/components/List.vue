@@ -2,60 +2,115 @@
     <div class="list">
         <div class="l_item" v-for="item in list">
             <div class="i_head">
-                <p>订单编号：E232454646454FDF34</p>
-                <p>{{item.desc}}</p>
+                <p>订单编号：{{item.order_no}}</p>
+                <p>{{item.order_status_desc}}</p>
             </div>
-            <div class="i_con" @click="godetail">
-                <img src="/static/img/cartpro.png" alt="">
+            <div class="i_con" v-for="items in item.goods_list" @click="godetail(item.order_no,item.order_status)">
+                <img :src="items.goods_pic" alt="">
                 <div class="i_art">
-                    <p class="i_name">普瑞福鼻腔抗菌液</p>
+                    <p class="i_name">{{items.goods_name}}</p>
                     <div>
-                        <p class="i_desc">复方薄荷油滴鼻液成人儿童鼻炎</p>
-                        <p class="i_num">×1</p>
+                        <p class="i_desc">{{items.goods_describe}}</p>
+                        <p class="i_num">×{{items.goods_num}}</p>
                     </div>
-                    <p class="i_price">￥2688.00</p>
+                    <p class="i_price">￥{{items.goods_price}}</p>
                 </div>
             </div>
             <div class="i_func">
-                <div class="cancleorder" v-if="item.status==1">取消订单</div>
-                <div class="payorder" v-if="item.status==1 ">付款</div>
-                <div class="remindorder" v-if="item.status==2">提醒发货</div>
-                <div class="logistics" v-if="item.status==3">查看物流</div>
-                <div class="confirmorder" v-if="item.status==3">确认收货</div>
-                <div class="deleteorder" v-if="item.status==4 || item.status==5">删除订单</div>
-                <div class="toevaluate" v-if="item.status==4">去评价</div>
-                <div class="shouhou" v-if="item.status==5">申请售后</div>
+                <div class="cancleorder" v-if="item.order_status==1" @click="CancleOrder(item.order_no)">取消订单</div>
+                <div class="payorder" v-if="item.order_status==1" @click="PayOrder(item.order_no)">付款</div>
+                <div class="remindorder" v-if="item.order_status==2"  @click="RemindOrder(item.order_no)">提醒发货</div>
+                <div class="logistics" v-if="item.order_status==3"  @click="LookOrder(item.order_no)">查看物流</div>
+                <div class="confirmorder" v-if="item.order_status==3" @click="EnterOrder(item.order_no)">确认收货</div>
+                <div class="deleteorder" v-if="item.order_status==4 || item.order_status==5 || item.order_status==0" @click="DeleteOrder(item.order_no)">删除订单</div>
+                <div class="toevaluate" v-if="item.order_status==4" @click="EvaluateOrder(item.order_no)">去评价</div>
+                <div class="shouhou" v-if="item.order_status==5" @click="AfterSale(item.order_no)">申请售后</div>
             </div>
         </div>
     </div>
 </template>
 
 <script>
+    import axios from "axios"
+    import global from "../../../components/Global"
     export default {
         name: "List",
+        props:['list'],
         data(){
             return {
-                list:[{
-                    status:1,
-                    desc:'待付款'
-                },{
-                    status:2,
-                    desc:'已付款'
-                },{
-                    status:3,
-                    desc:'待收货'
-                },{
-                    status:4,
-                    desc:'待评价'
-                },{
-                    status:5,
-                    desc:'交易成功'
-                }]
+
+                token:global.token
             }
         },
         methods:{
-            godetail(){
-                this.$router.push('/Orderdetail')
+            godetail(e,s){
+                this.$router.push({
+                    path:'/Orderdetail',
+                    query:{
+                        order_no:e,
+                        status:s
+                    }
+                })
+            },
+            PayOrder(){ //去付款
+                axios.post('/Order/cancelOrder',{
+                    token:this.token,
+                    order_no:e
+                }).then(this.tishi)
+            },
+            LookOrder(e){ //查看物流
+                this.$router.push({
+                    path:'/Logistics',
+                    query:{
+                        order_no:e
+                    }
+                })
+            },
+            CancleOrder(e){ //取消订单
+                axios.post('/Order/cancelOrder',{
+                    token:this.token,
+                    order_no:e
+                }).then(this.tishi)
+            },
+            EnterOrder(e){       //确认订单
+                axios.post('/Order/confirmOrder',{
+                    token:this.token,
+                    order_no:e
+                }).then(this.tishi)
+            },
+            EvaluateOrder(e){        //去评价
+                this.$router.push({
+                    path:'/Evaluate',
+                    query:{
+                        order_no:e
+                    }
+                })
+            },
+            AfterSale(e){   //申请售后
+                this.$router.push({
+                    path:'/Choosetype',
+                    query:{
+                        order_no:e
+                    }
+                })
+            },
+            RemindOrder(e){
+                axios.post('/Order/remindOrder ',{
+                    token:this.token,
+                    order_no:e
+                }).then(this.tishi)
+            },
+                DeleteOrder(e){ //删除订单
+                axios.post('/Order/delOrder ',{
+                    token:this.token,
+                    order_no:e
+                }).then(this.tishi)
+            },
+            tishi(rs){
+                this.$layer.msg(rs.data.msg)
+                if(rs.data.status==1){
+                    this.$emit('refreshData')
+                }
             }
         }
     }
@@ -103,6 +158,10 @@
         -webkit-box-sizing: border-box;
         -moz-box-sizing: border-box;
         box-sizing: border-box;
+        margin-bottom: .3rem;
+    }
+    .i_con:last-child{
+        margin-bottom: 0;
     }
     .i_con>img{
         width: 1.5rem;

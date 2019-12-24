@@ -5,41 +5,15 @@
 			商品推荐
 		</div>
 		<ul>
-			<li>
+			<li v-for="item in recommend">
 				<div class="p_left">
 					<img src="../../../../static/img/tg_goods01.png" alt="">
 				</div>
 				<div class="p_right">
-					<h3>普瑞福鼻腔抗菌液</h3>
-					<p>复方薄荷油滴鼻液成人儿童鼻炎抑菌液鼻腔喷剂鼻出血干燥</p>
+					<h3>{{item.goods_name}}</h3>
+					<p>{{item.goods_describe}}</p>
 					<div>
-						<span class="p_price">￥2688.00</span>
-						<button>立即购买</button>
-					</div>
-				</div>
-			</li>
-			<li>
-				<div class="p_left">
-					<img src="../../../../static/img/tg_goods01.png" alt="">
-				</div>
-				<div class="p_right">
-					<h3>普瑞福鼻腔抗菌液</h3>
-					<p>复方薄荷油滴鼻液成人儿童鼻炎抑菌液鼻腔喷剂鼻出血干燥</p>
-					<div>
-						<span class="p_price">￥2688.00</span>
-						<button>立即购买</button>
-					</div>
-				</div>
-			</li>
-			<li>
-				<div class="p_left">
-					<img src="../../../../static/img/tg_goods01.png" alt="">
-				</div>
-				<div class="p_right">
-					<h3>普瑞福鼻腔抗菌液</h3>
-					<p>复方薄荷油滴鼻液成人儿童鼻炎抑菌液鼻腔喷剂鼻出血干燥</p>
-					<div>
-						<span class="p_price">￥2688.00</span>
+						<span class="p_price">￥{{item.goods_price}}</span>
 						<button>立即购买</button>
 					</div>
 				</div>
@@ -50,7 +24,8 @@
 
 <script>
 export default {
-  name: 'HomeProductrec'
+  name: 'HomeProductrec',
+    props:['recommend']
 }
 </script>
 <style lang="stylus" scoped>

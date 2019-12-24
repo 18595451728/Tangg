@@ -1,4 +1,5 @@
 <template>
+
     <div class="shopcart">
         <Header></Header>
         <con></con>
@@ -10,13 +11,24 @@
     import Header from "./components/Header"
     import con from "./components/cartCon"
     import Footer from "./components/Footer"
+
     export default {
         name: "Shopcart",
         components:{
             Header,
             con,
             Footer
-        }
+        },
+        data () {
+            return {
+
+            }
+        },
+        mounted() {
+
+        },
+
+
     }
 </script>
 

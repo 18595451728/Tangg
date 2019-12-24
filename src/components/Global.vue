@@ -2,7 +2,7 @@
 </template>
 
 <script>
-    const token = "ae4256621198039a911977f4a54898ed"
+    const token = "c6d96d502b11618e33b2f891ee81fc06"
     const baseUrl = "http://tangguan.123bingo.cn"
     export default {
         token,

@@ -1,20 +1,19 @@
 <template>
     <div class="popup" v-show="popup" @click="showPopup">
-        <!--{{skus}}-->
         <div class="p_con" @click.stop="">
             <img src="/static/img/canclie.png" class="cancle" @click="showPopup" alt="">
-            <div class="pro_top">
+            <div class="pro_top" v-if="proInfoBig.sku_data.length > 0">
 
-                <img :src="proInfoBig.sku_data[sku].sku_logo" alt="">
+                <img :src="proInfoBig.sku_data ? (proInfoBig.sku_data[skuIndex].sku_logo ? proInfoBig.sku_data[skuIndex].sku_logo :'' ) :''" alt="">
                 <div>
-                    <p>￥{{proInfoBig.sku_data[sku].goods_price}}</p>
+                    <p>￥{{proInfoBig.sku_data[skuIndex].goods_price}}</p>
                     <p>选择产品规格</p>
                 </div>
             </div>
             <div class="choosesku">
                 <p>选择产品型号</p>
                 <div class="sku">
-                    <p v-for="item,index in proInfoBig.sku_data" :class="{active:sku==index}" @click="changesku(index)">
+                    <p v-for="item,index in proInfoBig.sku_data" :class="{active:sku == index}" @click="changesku(index)">
                         {{item.sku_info}}
                     </p>
                 </div>
@@ -30,27 +29,31 @@
             <p class="tishi">当前商品可使用<span>满200减10</span>优惠券</p>
             <div class="func">
                 <div class="addCart" @click="addCart">加入购物车</div>
-                <div class="buyNow">立即购买</div>
+                <div class="buyNow" @click="buyNow">立即购买</div>
             </div>
         </div>
     </div>
 </template>
 
 <script>
+    import axios from 'axios'
     export default {
         name: "Popup",
         props:{
-            proInfoBig:Object,
+
+            proInfoBig:{sku_data:[]},
             popup:true,
-            sku_data:Object,
-            skuIndex:'',
+            sku_data:Array,
+            skuIndex:0,
+            goods_cate_id:'',
         },
         data(){
             return {
+                cart_type:0,
                 popup1:0, // 购买参数是否显示
-                sku:'234_236',
+                sku:'',
                 proNum:1
-            }
+        }
         },
         methods:{
             showPopup(){
@@ -60,14 +63,48 @@
             changesku(e){
                 this.sku = e
             },
-            reduce(){},
-            add(){},
-            defaultNum(){
-               if (!this.proNum) this.proNum = 1
+            // 购物数量 减少
+            reduce(){
+                this.proNum --;
+                if(this.proNum <= 1){
+                    this.proNum = 1
+                }
             },
+            // 购物数量 增加
+            add(){
+                this.proNum ++
+                if( this.proNum >= this.proInfoBig.list.sale_num){
+                    this.proNum = this.proInfoBig.list.sale_num
+                }
+            },
+            defaultNum(){
+                if (!this.proNum) this.proNum = 1
+            },
+
+            // 加入购物车
             addCart(){
-                this.$router.push('/Shopcart')
-            }
+                this.buy(0)
+            },
+
+            // 进行购买
+            buyNow(){
+                this.buy(1)
+            },
+
+            // 加入购物车方法
+            buy(type) {
+                // goods_id 商品id
+                axios.post("/Cart/addCart",{token: this.$storage.session.get('token'), goods_id:this.goods_cate_id, goods_num:this.proNum,cart_type:type})
+                    .then(this.addShopApi);
+            },
+
+            // 加入购物车接口
+            addShopApi(res) {
+                let data = res.data;
+                if(data.status === 1){
+                    this.$router.push('/Shopcart')
+                }
+            },
 
         }
     }

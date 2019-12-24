@@ -35,7 +35,7 @@
             </router-link>
         </div>
         <div class="l_area">
-            <div class="l_each">
+            <div class="l_each" @click="toTeam">
                 <div class="e-left">
                     <img src="../../../../static/img/partner.png" class="coupon" alt=""><span>我的团队</span>
                 </div>
@@ -54,6 +54,9 @@
             },
             toCoupon(){
                 this.$router.push('/Coupon')
+            },
+            toTeam(){
+                this.$router.push('/cityPartnerTeam')
             }
         }
     }

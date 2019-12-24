@@ -1,5 +1,5 @@
 <template>
-    <div class="wuliu">
+    <div class="wuliu" v-if="status>=3">
         <div class="w_con">
             <div>
                 <p>卖家已发货</p>
@@ -13,9 +13,22 @@
 <script>
     export default {
         name: "wuliu",
+        data(){
+            return {
+                status:''
+            }
+        },
+        mounted(){
+            this.status = this.$route.query.status
+        },
         methods:{
             todetail(){
-                this.$router.push('/Logistics')
+                this.$router.push({
+                    path:'/Logistics',
+                    query:{
+                        order_no:this.$route.query.order_no
+                    }
+                })
             }
         }
     }
